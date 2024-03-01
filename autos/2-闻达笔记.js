@@ -1,3 +1,4 @@
+//wenda_auto_default_disabled 这行代码将使本auto默认不启用
 app.plugins.push({ icon: 'note-edit-outline', url: "/static/wdnote/index.html" })
 
 

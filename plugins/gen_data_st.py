@@ -51,7 +51,7 @@ try:
         from langchain.embeddings import HuggingFaceEmbeddings
         embeddings = HuggingFaceEmbeddings(model_name='')
         embeddings.client = sentence_transformers.SentenceTransformer(
-            model_path, device="cuda")
+            model_path, device="cpu")
 except Exception as e:
     error_helper("embedding加载失败",
                  r"https://github.com/l15y/wenda")
@@ -75,7 +75,7 @@ def make_index():
     global docs
     if hasattr(settings.librarys.rtst,"size") and hasattr(settings.librarys.rtst,"overlap"):
         text_splitter = CharacterTextSplitter(
-            chunk_size=int(settings.librarys.rtst.size), chunk_overlap=int(settings.librarys.rtst.overlap), separator='\n')
+            chunk_size=int(settings.librarys.rtst.size), chunk_overlap=int(settings.librarys.rtst.overlap), separator='\n\n\n')
     else:
         text_splitter = CharacterTextSplitter(
             chunk_size=20, chunk_overlap=0, separator='\n')

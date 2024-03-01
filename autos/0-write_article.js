@@ -8,7 +8,7 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=0.1
 // @grant        none
 // ==/UserScript==
-
+//wenda_auto_default_disabled 这行代码将使本auto默认不启用
 let RomanNumeralsMap = {
     'III': 3,
     'II': 2,
@@ -74,11 +74,11 @@ func.push({
     },
 })
 func.push({
-    name: "根据提纲写论文",
-    description: "根据主题撰写内容翔实、有信服力的论文",
+    name: "写金融监管报告",
+    description: "根据主题撰写内容翔实、有信服力的金融监管报告，用语简练，精确",
     question: async () => {
         title = app.question
-        app.max_length = 4096
+        app.max_length = 32000
         app.chat = []
         resp =title.split("\n")
         title=resp[0]

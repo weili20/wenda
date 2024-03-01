@@ -1,0 +1,5 @@
+zhipuai
+ipykernel>=6.26.0
+ipython>=8.18.1
+jupyter_client>=8.6.0
+matplotlib>=3.5.1

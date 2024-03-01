@@ -8,7 +8,7 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=0.1
 // @grant        none
 // ==/UserScript==
-
+//wenda_auto_default_disabled 这行代码将使本auto默认不启用
 app.plugins.push({ icon: "cat", url: "static/blockly.html", hide_title: true })
 window.addEventListener('message', function (e) {
     if (e.data.from == '猫猫也会的图块化编程') {

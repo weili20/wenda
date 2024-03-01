@@ -1,13 +1,13 @@
 <html>
 
   <head>
-    <title>闻达</title>
+    <title>Financial Regulatory Knowledge Hub</title>
     <meta charset="utf-8" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=400,  user-scalable=no" />
-    <link rel="shortcut icon" href="wd.png" />
+    <link rel="shortcut icon" href="logo.png" />
     <!-- <link href="https://npm.elemecdn.com/@mdi/font@6.9.96/css/materialdesignicons.min.css" rel="stylesheet">
 	<link href="https://npm.elemecdn.com/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
 	<script src="https://npm.elemecdn.com/vue@2.x/dist/vue.min.js"></script>
@@ -233,9 +233,9 @@
         </v-navigation-drawer>
         <v-toolbar v-if="show_header" style="opacity: 80%">
           <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-          <v-toolbar-title><a
+          <v-toolbar-title><span
               :style="'filter: brightness(50%);font-size: larger;text-decoration: none; color: '+color"
-              href="https://github.com/l15y/wenda">{{$t("wenda") }}</a></v-toolbar-title>
+              >{{$t("Financial Regulatory Knowledge Hub") }}</span></v-toolbar-title>
         </v-toolbar>
         <v-tabs-items v-model="tab" style="margin-bottom: 48px"
           :style="{marginTop: show_header ? '64px' : '0px'}">
@@ -319,47 +319,24 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <div v-bind="attrs" v-on="on">
-                      <v-icon :color="current_func=='知识库'?color:''" text
-                        @click="current_func=='知识库'?current_func='':current_func='知识库'">
+                      <v-icon :color="current_func=='金融监管知识库'?color:''" text
+                        @click="current_func=='金融监管知识库'?current_func='':current_func='金融监管知识库'">
                         mdi-book-open-variant
                       </v-icon>
                     </div>
                   </template>
-                  <span>{{$t("zhishiku")}}</span>
+                  <span>{{$t("金融监管知识库")}}</span>
                 </v-tooltip>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <div v-bind="attrs" v-on="on">
-                      <v-icon :color="current_func=='快速知识库'?color:''" text
-                        @click="current_func=='快速知识库'?current_func='':current_func='快速知识库'">
-                        mdi-lightning-bolt
+                      <v-icon :color="current_func=='撰写金融监管报告'?color:''" text
+                        @click="current_func=='撰写金融监管报告'?current_func='':current_func='撰写金融监管报告'">
+                        mdi-file-document-edit
                       </v-icon>
                     </div>
                   </template>
-                  <span>{{$t("zhishiku")}}快速模式</span>
-                </v-tooltip>
-                |
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <div v-bind="attrs" v-on="on">
-                      <v-icon :color="sst_started?color:''" text
-                        @click="sst_started?stop_listen():listen()">
-                        mdi-microphone
-                      </v-icon>
-                    </div>
-                  </template>
-                  <span>语音输入</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <div v-bind="attrs" v-on="on">
-                      <v-icon :color="tts_on?color:''" text
-                        @click="tts_on=!tts_on">
-                        mdi-headset
-                      </v-icon>
-                    </div>
-                  </template>
-                  <span>阅读文本</span>
+                  <span>撰写金融监管报告</span>
                 </v-tooltip>
                 |
                 <v-tooltip bottom>
@@ -464,7 +441,7 @@
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on, attrs }">
                       <div v-bind="attrs" v-on="on" style="width: 100%;">
-                        <v-slider :min="2000" :max="8192" :step="100"
+                        <v-slider :min="2000" :max="32768" :step="100"
                           v-model="max_length" :thumb-color="color"
                           label="max_length" thumb-label><template v-slot:append>
                             <v-text-field v-model="max_length" class="mt-0 pt-0"

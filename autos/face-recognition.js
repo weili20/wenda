@@ -8,6 +8,7 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=0.1
 // @grant        none
 // ==/UserScript==
+//wenda_auto_default_disabled 这行代码将使本auto默认不启用
 if (navigator != null && (window.location.toString().toUpperCase().indexOf("HTTPS") > -1 || window.location.toString().toUpperCase().indexOf("127") > -1)) {
 
 } else {

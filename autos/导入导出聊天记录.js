@@ -9,6 +9,7 @@
 // @run-at document-idle
 // @grant        none
 // ==/UserScript==
+//wenda_auto_default_disabled 这行代码将使本auto默认不启用
 document.addEventListener('keydown', async function (e) {
     if (e.key.toLowerCase() == 's' && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
         e.preventDefault();

@@ -1,15 +1,14 @@
 // ==UserScript==
-// @name         知识库
+// @name         金融监管知识库
 // @namespace    http://tampermonkey.net/
 // @version      0.1
-// @description  利用知识库回答问题
+// @description  利用金融监管知识库回答问题
 // @author       lyyyyy
 // @match        http://127.0.0.1:17860/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=0.1
-// @run-at document-idle
+// @run-at       document-idle
 // @grant        none
 // ==/UserScript==
-//wenda_auto_default_disabled 这行代码将使本auto默认不启用
 get_title_form_md = (s) => {
     console.log(s)
     try {
@@ -27,8 +26,66 @@ get_url_form_md = (s) => {
     }
 }
 window.answer_with_zsk = async (Q) => {
+    app.chat.push({ "role": "user", "content": Q })
+    checkPrompt = "你善于根据要求判断问题意图，并准确回答问题。请从下面的要求中选出最合适的一个意图，要求如下：\n"
+     +"1. 如果是\"某系统或应用有哪些适用的监管政策\"意图，则直接回答'0'，不要解释\n"
+     +"2. 如果是其他意图，则直接回答'1'，不要解释\n\n"
+     +"问题："+Q
+    checkResponse = await send(checkPrompt, keyword = Q, show = false)
+    if(checkResponse=='0') {
+        answer = {
+            role: "AI",
+            content: "适用《网络安全等级保护基本要求》监管政策"
+        }
+        app.chat.push(answer)
+    } else {
+        app.top_p = 0.2
+        kownladge = (await find(Q, 5)).filter(i => !i.score || i.score < 200).map(i => ({
+            title: get_title_form_md(i.title),
+            url: get_url_form_md(i.title),
+            content: i.content
+        }))
+        if (kownladge.length > 0) {
+            answer = {
+                role: "AI",
+                content: "",
+                sources: kownladge
+            }
+            app.chat.push(answer)
+            result = []
+            for (let i in kownladge) {
+                answer.content = '正在查找：' + kownladge[i].title
+                if (i > 3) continue
+                /*let prompt = app.zsk_summarize_prompt + '\n' +
+                    kownladge[i].content + "\n问题：" + Q*/
+                let prompt = "从文档\n"
+                +"\"\"\"\n"
+                + kownladge[i].content + "\n"
+                +"\"\"\"\n"
+                +"中找问题\n"
+                + Q + "\n"
+                +"\"\"\"\n"
+                +"的答案，找到答案就仅使用文档语句回答问题，找不到答案就用自身知识回答并且告诉用户该信息不是来自文档。\n\n"
+                +"不要复述问题，直接开始回答。"
+
+                result.push(await send(prompt, keyword = Q, show = false))
+            }
+            app.chat.pop()
+            app.chat.pop()
+            let prompt = app.zsk_answer_prompt + '\n' +
+                result.join('\n') + "\n问题：" + Q
+            return await send(prompt, keyword = Q, show = true, sources = kownladge)
+        } else {
+            app.chat.pop()
+            sources = [{
+                title: '未匹配到知识库',
+                content: '本次对话内容完全由模型提供'
+            }]
+            return await send(Q, keyword = Q, show = true, sources = sources)
+        }
+    }
     // lsdh(false)
-    app.top_p = 0.2
+    /*app.top_p = 0.2
     app.chat.push({ "role": "user", "content": Q })
     kownladge = (await find(Q, 5)).filter(i => !i.score || i.score < 120).map(i => ({
         title: get_title_form_md(i.title),
@@ -62,11 +119,11 @@ window.answer_with_zsk = async (Q) => {
             content: '本次对话内容完全由模型提供'
         }]
         return await send(Q, keyword = Q, show = true, sources = sources)
-    }
+    }*/
 }
 func.push({
-    name: "知识库",
-    description: "通过知识库回答问题",
+    name: "金融监管知识库",
+    description: "通过金融监管知识库回答问题",
     question: async (Q) => {
         answer_with_zsk(Q)
     }
@@ -100,60 +157,3 @@ window.answer_with_fast_zsk = async (Q) => {
         return await send(Q, keyword = Q, show = true, sources = sources)
     }
 }
-func.push({
-    name: "快速知识库",
-    question: window.answer_with_fast_zsk
-}
-)
-func.push({
-    name: "sgwx知识库全文爬取",
-    question: async () => {
-        let Q = app.question
-
-        lsdh(true)//打开历史对话
-        lsdh(false)
-        app.chat.push({ "role": "user", "content": Q })
-        kownladge = await find(Q, 2)
-        app.chat.push({
-            "role": "AI", "content": "识别结果:\n|标题|内容|\n|--|--|\n" +
-                kownladge.map(i => "|" + i.title + "|" + i.content.replace(/\n/g, ' ') + "|").join("\n")
-        })
-        result = []
-        for (let i in kownladge) {
-            wx_response = await fetch("/api/read_sgwx", {
-                method: 'post',
-                body: JSON.stringify({
-                    url: kownladge[i].title.match(/\((.+)\)/)[1],
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-
-            let prompt = "精炼地总结以下文段中与问题相关的信息为二十个字。\n" + await wx_response.text() + "\n问题：" + Q
-            result.push(await send(prompt))
-        }
-        let prompt = "根据以下资料，用中文回答问题。\n" +
-            result.join('\n') + "\n问题：" + Q
-        await send(prompt)
-
-    },
-})
-// func.push({
-//     name: "知识库step",
-//     question: async () => {
-//         let Q = app.question
-//         app.chat.push({ "role": "user", "content": "步数为0" })
-//         kownladge = await find(Q, 0)
-//         kownladge=kownladge.map(i => i.content).join('\n\n').replace(/'/g,"")
-//         app.chat.push({ "role": "AI", "content": kownladge })
-//         app.chat.push({ "role": "user", "content": "步数为1" })
-//         kownladge = await find(Q, 1)
-//         kownladge=kownladge.map(i => i.content).join('\n\n').replace(/'/g,"")
-//         app.chat.push({ "role": "AI", "content": kownladge })
-//         app.chat.push({ "role": "user", "content": "步数为2" })
-//         kownladge = await find(Q, 2)
-//         kownladge=kownladge.map(i => i.content).join('\n\n').replace(/'/g,"")
-//         app.chat.push({ "role": "AI", "content": kownladge })
-//     },
-// })
